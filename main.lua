@@ -138,6 +138,10 @@ function love.load()
 
     pieceType = 1
     pieceRotation = 1
+    pieceX = 3
+    pieceY = 0
+
+    timer = 0
 
     gridXCount = 10
     gridYCount = 18
@@ -166,6 +170,22 @@ function love.keypressed(key)
         if pieceRotation < 1 then
             pieceRotation = #pieceStructures[pieceType]
         end
+    elseif key == 'a' then
+        pieceX = pieceX - 1
+    elseif key == 'd' then
+        pieceX = pieceX + 1
+    elseif key == 'q' then
+        pieceType = pieceType + 1
+        if pieceType > #pieceStructures then
+            pieceType = 1
+        end
+        pieceRotation = 1
+    elseif key == 'e' then
+        pieceType = pieceType -1 
+        if pieceType < 1 then
+            pieceType = #pieceStructures
+        end
+        pieceRotation = 1
     end
 end
 
@@ -206,7 +226,7 @@ function love.draw()
         for x = 1, 4 do
             local block = pieceStructures[pieceType][pieceRotation][y][x]
             if block ~= ' ' then
-                drawBlock(block, x, y)
+                drawBlock(block, x + pieceX, y + pieceY)
             end
         end
     end
