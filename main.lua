@@ -156,6 +156,16 @@ end
 function love.keypressed(key)
     if key == 'escape' then
         love.event.push('quit')
+    elseif key == 'w' then
+        pieceRotation = pieceRotation + 1
+        if pieceRotation > #pieceStructures[pieceType] then
+            pieceRotation = 1
+        end
+    elseif key == 's' then
+        pieceRotation = pieceRotation - 1
+        if pieceRotation < 1 then
+            pieceRotation = #pieceStructures[pieceType]
+        end
     end
 end
 
