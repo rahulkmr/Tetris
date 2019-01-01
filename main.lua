@@ -269,6 +269,29 @@ function canPieceMove(testX, testY, testRotation)
 end
 
 
+function findCompleteRows()
+    for y = 1, gridYCount do
+        local complete = true
+        for x = 1, gridXCount do
+            if inert[y][x] == ' ' then
+                complete = false
+            end
+        end
+
+        if complete then
+            for removeY = y, 2, -1 do
+                for removeX = 1, gridXCount do
+                    inert[removeY][removeX] = inert[removeY - 1][removeX]
+                end
+            end
+
+            for removeX = 1, gridXCount do
+                inert[1][removeX] = ' '
+            end
+        end
+    end
+end
+
 function love.update(delta)
     timer = timer + delta
     if timer >= timerLimit then
@@ -285,6 +308,7 @@ function love.update(delta)
                     end
                 end
             end
+            findCompleteRows()
             newPiece()
         end
     end
