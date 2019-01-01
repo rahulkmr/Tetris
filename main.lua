@@ -310,6 +310,10 @@ function love.update(delta)
             end
             findCompleteRows()
             newPiece()
+
+            if not canPieceMove(pieceX, pieceY, pieceRotation) then
+                love.load()
+            end
         end
     end
 end
