@@ -161,19 +161,33 @@ function love.keypressed(key)
     if key == 'escape' then
         love.event.push('quit')
     elseif key == 'w' then
-        pieceRotation = pieceRotation + 1
-        if pieceRotation > #pieceStructures[pieceType] then
-            pieceRotation = 1
+        local testRotation = pieceRotation + 1
+        if testRotation > #pieceStructures[pieceType] then
+            testRotation = 1
+        end
+
+        if canPieceMove(pieceX, pieceY, testRotation) then
+            pieceRotation = testRotation
         end
     elseif key == 's' then
-        pieceRotation = pieceRotation - 1
-        if pieceRotation < 1 then
-            pieceRotation = #pieceStructures[pieceType]
+        local testRotation = pieceRotation - 1
+        if testRotation < 1 then
+            testRotation = #pieceStructures[pieceType]
+        end
+
+        if canPieceMove(pieceX, pieceY, testRotation) then
+            pieceRotation = testRotation
         end
     elseif key == 'a' then
-        pieceX = pieceX - 1
+        local testX = pieceX - 1
+        if canPieceMove(testX, pieceY, pieceRotation) then
+            pieceX = testX
+        end
     elseif key == 'd' then
-        pieceX = pieceX + 1
+        local testX = pieceX + 1
+        if canPieceMove(testX, pieceY, pieceRotation) then
+            pieceX = testX
+        end
     elseif key == 'q' then
         pieceType = pieceType + 1
         if pieceType > #pieceStructures then
@@ -228,6 +242,23 @@ function love.draw()
             if block ~= ' ' then
                 drawBlock(block, x + pieceX, y + pieceY)
             end
+        end
+    end
+end
+
+function canPieceMove(testX, testY, testRotation)
+    return true
+end
+
+
+function love.update(delta)
+    timer = timer + delta
+    local timerLimit = 0.5
+    if timer >= timerLimit then
+        timer = timer - timerLimit
+        local testY = pieceY + 1
+        if canPieceMove(pieceX, testY, pieceRotation) then
+            pieceY = testY
         end
     end
 end
