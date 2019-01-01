@@ -140,11 +140,13 @@ function love.load()
     pieceRotation = 1
     pieceX = 3
     pieceY = 0
+    pieceXCount = 4
+    pieceYCount = 4
 
     timer = 0
 
-    gridXCount = 10
-    gridYCount = 18
+    gridXCount = 15
+    gridYCount = 30
 
     inert = {}
     for y = 1, gridYCount do
@@ -169,15 +171,6 @@ function love.keypressed(key)
         if canPieceMove(pieceX, pieceY, testRotation) then
             pieceRotation = testRotation
         end
-    elseif key == 's' then
-        local testRotation = pieceRotation - 1
-        if testRotation < 1 then
-            testRotation = #pieceStructures[pieceType]
-        end
-
-        if canPieceMove(pieceX, pieceY, testRotation) then
-            pieceRotation = testRotation
-        end
     elseif key == 'a' then
         local testX = pieceX - 1
         if canPieceMove(testX, pieceY, pieceRotation) then
@@ -188,18 +181,10 @@ function love.keypressed(key)
         if canPieceMove(testX, pieceY, pieceRotation) then
             pieceX = testX
         end
-    elseif key == 'q' then
-        pieceType = pieceType + 1
-        if pieceType > #pieceStructures then
-            pieceType = 1
+    elseif key == 's' then
+        while canPieceMove(pieceX, pieceY + 1, pieceRotation) do
+            pieceY = pieceY + 1
         end
-        pieceRotation = 1
-    elseif key == 'e' then
-        pieceType = pieceType -1 
-        if pieceType < 1 then
-            pieceType = #pieceStructures
-        end
-        pieceRotation = 1
     end
 end
 
@@ -236,8 +221,8 @@ function love.draw()
         end
     end
 
-    for y = 1, 4 do
-        for x = 1, 4 do
+    for y = 1, pieceYCount do
+        for x = 1, pieceXCount do
             local block = pieceStructures[pieceType][pieceRotation][y][x]
             if block ~= ' ' then
                 drawBlock(block, x + pieceX, y + pieceY)
@@ -247,6 +232,18 @@ function love.draw()
 end
 
 function canPieceMove(testX, testY, testRotation)
+    for x = 1, pieceXCount do
+        for y = 1, pieceYCount do
+            local newX = testX + x
+            local newY = testY + y
+            if pieceStructures[pieceType][testRotation][y][x] ~= ' ' and
+                (newX < 1 or newX > gridXCount or newY > gridYCount or
+                 inert[newY][newX] ~= ' ') then
+                    return false
+            end
+        end
+    end
+
     return true
 end
 
@@ -259,6 +256,11 @@ function love.update(delta)
         local testY = pieceY + 1
         if canPieceMove(pieceX, testY, pieceRotation) then
             pieceY = testY
+        else
+            pieceX = 3
+            pieceY = 0
+            pieceType = 1
+            pieceRotation = 1
         end
     end
 end
