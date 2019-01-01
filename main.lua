@@ -137,6 +137,7 @@ function newPiece()
     pieceX = 3
     pieceY = 0
     pieceType = table.remove(sequence)
+    timerLimit = 0.5
     if #sequence == 0 then
         newSequence()
     end
@@ -200,9 +201,10 @@ function love.keypressed(key)
         if canPieceMove(testX, pieceY, pieceRotation) then
             pieceX = testX
         end
-    elseif key == 's' then
+    elseif key == 'c' then
         while canPieceMove(pieceX, pieceY + 1, pieceRotation) do
             pieceY = pieceY + 1
+            timer = timerLimit
         end
     end
 end
@@ -269,13 +271,20 @@ end
 
 function love.update(delta)
     timer = timer + delta
-    local timerLimit = 0.5
     if timer >= timerLimit then
         timer = timer - timerLimit
         local testY = pieceY + 1
         if canPieceMove(pieceX, testY, pieceRotation) then
             pieceY = testY
         else
+            for y = 1, pieceYCount do
+                for x = 1, pieceXCount do
+                    local block = pieceStructures[pieceType][pieceRotation][y][x]
+                    if block ~= ' ' then
+                        inert[pieceY + y][pieceX + x] = block
+                    end
+                end
+            end
             newPiece()
         end
     end
