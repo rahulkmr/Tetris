@@ -132,14 +132,33 @@ pieceStructures = {
 }
 
 
-
-function love.load()
-    love.graphics.setBackgroundColor(255, 255, 255)
-
-    pieceType = 1
+function newPiece()
     pieceRotation = 1
     pieceX = 3
     pieceY = 0
+    pieceType = table.remove(sequence)
+    if #sequence == 0 then
+        newSequence()
+    end
+end
+
+function newSequence()
+    sequence = {}
+    for pieceTypeIndex = 1, #pieceStructures do
+        local position = love.math.random(#sequence + 1)
+        table.insert(
+            sequence,
+            position,
+            pieceTypeIndex
+        )
+    end
+end
+
+function love.load()
+    love.graphics.setBackgroundColor(255, 255, 255)
+    newSequence()
+    newPiece()
+
     pieceXCount = 4
     pieceYCount = 4
 
@@ -257,10 +276,7 @@ function love.update(delta)
         if canPieceMove(pieceX, testY, pieceRotation) then
             pieceY = testY
         else
-            pieceX = 3
-            pieceY = 0
-            pieceType = 1
-            pieceRotation = 1
+            newPiece()
         end
     end
 end
